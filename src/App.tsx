@@ -2,6 +2,7 @@ import maplibregl from 'maplibre-gl';
 import { useEffect, useRef } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './App.css';
+import SideBar from '../src/components/sidebar';
 
 function App() {
 	const mapContainer = useRef<HTMLDivElement>(null);
@@ -19,7 +20,12 @@ function App() {
 		return () => map.remove();
 	}, []);
 
-	return <div ref={mapContainer} className="map-style" />;
+	return (
+		<>
+			<div ref={mapContainer} className="map-style" />
+			<SideBar />
+		</>
+	);
 }
 
 export default App;

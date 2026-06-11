@@ -2,3 +2,28 @@
 	width: 100%;
 	height: 100vh;
 }
+
+.side-bar {
+	width: 20%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	background: linear-gradient(45deg, #5aa884, #1e334e);
+}
+
+.filter {
+	font-family: Sofia Sans, sans-serif;
+	font-size: 16px;
+	padding: 8px 12px;
+	border: 2px solid #4caf50;
+	border-radius: 6px;
+	background-color: #f9f9f9;
+	color: #333333ac;
+	outline: none;
+	transition: all 0.3s ease;
+	margin-top: 5%;
+}
+
+body {
+	background-color: #231f20;
+}
