@@ -1,29 +1,16 @@
-import maplibregl from 'maplibre-gl';
-import { useEffect, useRef } from 'react';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import { useState } from 'react';
 import './App.css';
-import SideBar from '../src/components/sidebar';
+import { MapContainer } from './components/MapContainer';
+import SideBar from './components/SideBar';
+import type { FilterParams } from './types/FilterParams';
 
 function App() {
-	const mapContainer = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		if (!mapContainer.current) return;
-
-		const map = new maplibregl.Map({
-			container: mapContainer.current,
-			style: 'https://tiles.openfreemap.org/styles/liberty',
-			center: [0, 0],
-			zoom: 2,
-		});
-
-		return () => map.remove();
-	}, []);
+	const [filters, setFilters] = useState<FilterParams | null>(null);
 
 	return (
 		<>
-			<div ref={mapContainer} className="map-style" />
-			<SideBar />
+			<MapContainer filters={filters} />
+			<SideBar onFilter={setFilters} />
 		</>
 	);
 }
