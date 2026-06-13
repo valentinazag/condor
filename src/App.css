@@ -12,7 +12,9 @@
 }
 
 .filter {
-	font-family: Sofia Sans, sans-serif;
+	font-family:
+		Sofia Sans,
+		sans-serif;
 	font-size: 16px;
 	padding: 8px 12px;
 	border: 2px solid #4caf50;
@@ -26,4 +28,28 @@
 
 body {
 	background-color: #231f20;
+}
+
+.custom-marker {
+	border-radius: 50%;
+	cursor: pointer;
+	box-shadow: 0 0 1px 1px rgba(255, 0, 0, 0.404);
+}
+
+.popup-content {
+	font-family: sans-serif;
+	padding: 5px;
+}
+
+.popup-title {
+	margin: 0 0 5px 0;
+}
+
+.popup-place {
+	margin: 0 0 5px 0;
+	font-weight: bold;
+}
+
+.popup-time {
+	color: #666;
 }
