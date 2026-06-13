@@ -13,6 +13,7 @@ export function MapContainer({ filters }: MapContainerProps) {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const { earthquakes, loading, error } = useEarthquakes(filters);
+	const markersRef = useRef<maplibregl.Marker[]>([]);
 	useEffect(() => {
 		if (!mapContainer.current) return;
 
@@ -26,6 +27,10 @@ export function MapContainer({ filters }: MapContainerProps) {
 
 	useEffect(() => {
 		if (!mapRef.current || earthquakes.length === 0) return;
+		markersRef.current.forEach((marker) => {
+			marker.remove();
+		});
+		markersRef.current = [];
 
 		earthquakes.forEach((feature) => {
 			const [longitude, latitude] = feature.geometry.coordinates;
@@ -54,21 +59,22 @@ export function MapContainer({ filters }: MapContainerProps) {
 
 			const formattedTime = time
 				? new Date(time).toLocaleString()
-				: 'Fecha no disponible';
+				: 'No date available';
 			const popupContent = `
             <div style="font-family: sans-serif; padding: 5px;">
-                <h3 style="margin: 0 0 5px 0; color: ${color};">Magnitud: ${magnitude ?? 'N/A'}</h3>
-                <p style="margin: 0 0 5px 0; font-weight: bold;">${place ?? 'Lugar no disponible'}</p>
+                <h3 style="margin: 0 0 5px 0; color: ${color};">Magnitude: ${magnitude ?? 'No magnitude available'}</h3>
+                <p style="margin: 0 0 5px 0; font-weight: bold;">${place ?? 'No place available'}</p>
                 <small style="color: #666;">${formattedTime}</small>
             </div>
         `;
 
-			new maplibregl.Marker({ element: el })
+			const marker = new maplibregl.Marker({ element: el })
 				.setLngLat([longitude, latitude])
 				.setPopup(
 					new maplibregl.Popup({ offset: size / 2 }).setHTML(popupContent),
 				)
 				.addTo(mapRef.current!);
+			markersRef.current.push(marker);
 		});
 	}, [earthquakes]);
 	return (
