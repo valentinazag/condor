@@ -39,7 +39,7 @@ export function useEarthquakes(filters: FilterParams | null) {
 				const parsed = v.parse(EarthquakeSchema, data);
 				setEarthquakes(parsed.features);
 			} catch (err) {
-				setError(err instanceof Error ? err.message : 'Error desconocido');
+				setError(err instanceof Error ? err.message : 'Error');
 			} finally {
 				setLoading(false);
 			}

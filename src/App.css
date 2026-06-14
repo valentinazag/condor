@@ -53,3 +53,124 @@ body {
 .popup-time {
 	color: #666;
 }
+
+.side-bar {
+	width: 320px;
+	height: 100vh;
+	position: fixed;
+	left: 0;
+	top: 0;
+	background: linear-gradient(45deg, #5aa884, #1e334e);
+	box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+	transition: transform 0.3s ease;
+	z-index: 10;
+	display: flex;
+	flex-direction: column;
+}
+
+.side-bar--open {
+	transform: translateX(0);
+}
+
+.side-bar--closed {
+	transform: translateX(-320px);
+}
+
+.side-bar__toggle {
+	position: absolute;
+	right: -10%;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 32px;
+	height: 32px;
+	background: #162436;
+	border: none;
+	border-radius: 0 8px 8px 0;
+	color: white;
+	cursor: pointer;
+	font-size: 12px;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+	z-index: 11;
+}
+
+.side-bar__toggle:hover {
+	background: #0c131d;
+}
+
+.side-bar__content {
+	padding: 24px 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	overflow-y: auto;
+	flex: 1;
+}
+
+.side-bar__title {
+	color: #e2e8f0;
+	font-size: 18px;
+	margin: 0;
+	font-family: sans-serif;
+}
+
+.filter-form {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.filter-form__label {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	color: #a0b4c8;
+	font-size: 13px;
+	font-family: sans-serif;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.filter-form__input {
+	padding: 10px 12px;
+	border: 1px solid #2d4a6b;
+	border-radius: 8px;
+	background-color: #162436;
+	color: #e2e8f0;
+	font-size: 14px;
+	outline: none;
+	transition: border-color 0.2s ease;
+}
+
+.filter-form__input:focus {
+	border-color: #5aa884;
+}
+
+.filter-form__button {
+	margin-top: 8px;
+	padding: 12px;
+	background: #5aa884;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-size: 15px;
+	cursor: pointer;
+	transition: background 0.2s ease;
+}
+
+.filter-form__button:hover {
+	background: #4a9874;
+}
+
+.map-style {
+	width: 100%;
+	height: 100vh;
+	transition:
+		margin-left 0.3s ease,
+		width 0.3s ease;
+	margin-left: 0;
+}
+
+.map-style--sidebar-open {
+	margin-left: 320px;
+	width: calc(100% - 320px);
+}

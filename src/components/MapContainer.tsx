@@ -7,9 +7,10 @@ import type { FilterParams } from '../types/FilterParams';
 
 type MapContainerProps = {
 	filters: FilterParams | null;
+	sidebarOpen: boolean;
 };
 
-export function MapContainer({ filters }: MapContainerProps) {
+export function MapContainer({ filters, sidebarOpen }: MapContainerProps) {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const { earthquakes, loading, error } = useEarthquakes(filters);
@@ -77,8 +78,13 @@ export function MapContainer({ filters }: MapContainerProps) {
 			markersRef.current.push(marker);
 		});
 	}, [earthquakes]);
+
 	return (
 		<>
+			<div
+				ref={mapContainer}
+				className={`map-style ${sidebarOpen ? 'map-style--sidebar-open' : ''}`}
+			/>
 			{loading && <p>Loading...</p>}
 			{error && <p>Error: {error}</p>}
 			<div ref={mapContainer} className="map-style" />
