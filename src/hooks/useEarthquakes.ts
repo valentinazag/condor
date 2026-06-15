@@ -26,7 +26,15 @@ export function useEarthquakes(filters: FilterParams | null) {
 	useEffect(() => {
 		if (!filters) return;
 		const { starttime, endtime, minmagnitude } = filters;
-		const url = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${starttime}&endtime=${endtime}&minmagnitude=${minmagnitude}`;
+
+		const params = new URLSearchParams({
+			format: 'geojson',
+			starttime: starttime,
+			endtime: endtime,
+			minmagnitude: minmagnitude.toString(),
+		});
+
+		const url = `https://earthquake.usgs.gov/fdsnws/event/1/query?${params.toString()}`;
 
 		async function fetchEarthquakes() {
 			setLoading(true);
