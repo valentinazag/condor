@@ -138,6 +138,7 @@ body {
 	transition:
 		opacity 0.15s ease,
 		transform 0.15s ease;
+	border: 1.5px solid rgba(0, 0, 0, 0.337);
 }
 
 .custom-marker:hover {
