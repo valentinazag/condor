@@ -1,0 +1,6 @@
+services:
+  condor:
+    build: .
+    container_name: condor_app
+    ports:
+      - "8080:80"
