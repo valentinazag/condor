@@ -3,13 +3,24 @@ import { useEffect, useRef } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '../App.css';
 import { useEarthquakes } from '../hooks/useEarthquakes';
-import type { MapContainerProps } from '../types/MapContainerProps';
+import type { FilterParams } from '../types/FilterParams';
+import {
+	buildPopupHTML,
+	getMarkerColor,
+	getMarkerSize,
+} from '../utils/markerUtils';
 
-export function MapContainer({ filters }: MapContainerProps) {
+type MapContainerProps = {
+	filters: FilterParams | null;
+	isDarkMode: boolean;
+};
+
+export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const { earthquakes, loading, error, hasSearched } = useEarthquakes(filters);
 	const markersRef = useRef<maplibregl.Marker[]>([]);
+
 	useEffect(() => {
 		if (!mapContainer.current) return;
 
@@ -22,8 +33,19 @@ export function MapContainer({ filters }: MapContainerProps) {
 	}, []);
 
 	useEffect(() => {
-		markersRef.current.forEach((m) => {
-			m.remove();
+		const map = mapRef.current;
+		if (!map) return;
+
+		const newStyle = isDarkMode
+			? 'https://tiles.openfreemap.org/styles/dark'
+			: 'https://tiles.openfreemap.org/styles/liberty';
+
+		map.setStyle(newStyle);
+	}, [isDarkMode]);
+
+	useEffect(() => {
+		markersRef.current.forEach((marker) => {
+			marker.remove();
 		});
 		markersRef.current = [];
 
@@ -33,63 +55,31 @@ export function MapContainer({ filters }: MapContainerProps) {
 		earthquakes.forEach((feature) => {
 			const [longitude, latitude] = feature.geometry.coordinates;
 			const { place, mag: magnitude, time } = feature.properties;
-			let color = '#a0aec0';
-			let size = 15;
-			if (magnitude !== null) {
-				size = Math.max(15, magnitude * 6);
 
-				if (magnitude < 2) {
-					color = '#F7F7F7';
-				} else if (magnitude < 3) {
-					color = '#DBDBDB';
-				} else if (magnitude < 4) {
-					color = '#BEC4D9';
-				} else if (magnitude < 5) {
-					color = '#A1D7E3';
-				} else if (magnitude < 6) {
-					color = '#8FC891';
-				} else if (magnitude < 7) {
-					color = '#F9EB33';
-				} else if (magnitude < 8) {
-					color = '#F7C328';
-				} else if (magnitude < 9) {
-					color = '#E9872D';
-				} else if (magnitude < 10) {
-					color = '#F3653A';
-				} else {
-					color = '#ED5338';
-				}
-			}
+			const color = getMarkerColor(magnitude);
+			const size = getMarkerSize(magnitude);
 
-			const el = document.createElement('div');
-			el.className = 'custom-marker';
-			el.style.backgroundColor = color;
-			el.style.width = `${size}px`;
-			el.style.height = `${size}px`;
+			const markerEl = document.createElement('div');
+			markerEl.className = 'custom-marker';
+			markerEl.style.backgroundColor = color;
+			markerEl.style.width = `${size}px`;
+			markerEl.style.height = `${size}px`;
 
-			const formattedTime = time
-				? new Date(time).toLocaleString()
-				: 'No date available';
-			const popupContent = `
-            <div style="font-family: sans-serif; padding: 5px;">
-                <h3 style="margin: 0 0 5px 0; color: ${color};">Magnitude: ${magnitude ?? 'No magnitude available'}</h3>
-                <p style="margin: 0 0 5px 0; font-weight: bold;">${place ?? 'No place available'}</p>
-                <small style="color: #666;">${formattedTime}</small>
-            </div>
-        `;
-
-			const marker = new maplibregl.Marker({ element: el })
+			const marker = new maplibregl.Marker({ element: markerEl })
 				.setLngLat([longitude, latitude])
 				.setPopup(
-					new maplibregl.Popup({ offset: size / 2 }).setHTML(popupContent),
+					new maplibregl.Popup({ offset: size / 2 }).setHTML(
+						buildPopupHTML(magnitude, place, time),
+					),
 				)
-				.addTo(mapRef.current!);
+				.addTo(map);
+
 			markersRef.current.push(marker);
 		});
 	}, [earthquakes]);
 
 	return (
-		<div style={{ position: 'fixed', inset: 0 }}>
+		<div className="map-root">
 			<div ref={mapContainer} className="map-style" />
 			{loading && (
 				<div className="map-overlay">
