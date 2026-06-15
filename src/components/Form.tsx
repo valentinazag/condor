@@ -70,8 +70,8 @@ export function Form({ onFilter }: SideBarProps) {
 					value={minmagnitude}
 					step={0.1}
 					onChange={(event) => {
-						const val = event.target.value;
-						setMinmagnitude(val === '' ? '' : Number(val));
+						const value = event.target.value;
+						setMinmagnitude(value === '' ? '' : Number(value));
 					}}
 				/>
 			</label>
