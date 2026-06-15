@@ -12,13 +12,15 @@ import {
 
 type MapContainerProps = {
 	filters: FilterParams | null;
+	isDarkMode: boolean;
 };
 
-export function MapContainer({ filters }: MapContainerProps) {
+export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const { earthquakes, loading, error, hasSearched } = useEarthquakes(filters);
 	const markersRef = useRef<maplibregl.Marker[]>([]);
+
 	useEffect(() => {
 		if (!mapContainer.current) return;
 
@@ -29,6 +31,17 @@ export function MapContainer({ filters }: MapContainerProps) {
 		});
 		return () => mapRef.current?.remove();
 	}, []);
+
+	useEffect(() => {
+		const map = mapRef.current;
+		if (!map) return;
+
+		const newStyle = isDarkMode
+			? 'https://tiles.openfreemap.org/styles/dark'
+			: 'https://tiles.openfreemap.org/styles/liberty';
+
+		map.setStyle(newStyle);
+	}, [isDarkMode]);
 
 	useEffect(() => {
 		markersRef.current.forEach((marker) => {

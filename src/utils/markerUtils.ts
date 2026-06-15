@@ -1,3 +1,16 @@
+export const legendItems = [
+	{ label: 'Mag < 2', color: '#F7F7F7' },
+	{ label: 'Mag 2 - 2.9', color: '#DBDBDB' },
+	{ label: 'Mag 3 - 3.9', color: '#BEC4D9' },
+	{ label: 'Mag 4 - 4.9', color: '#A1D7E3' },
+	{ label: 'Mag 5 - 5.9', color: '#8FC891' },
+	{ label: 'Mag 6 - 6.9', color: '#F9EB33' },
+	{ label: 'Mag 7 - 7.9', color: '#F7C328' },
+	{ label: 'Mag 8 - 8.9', color: '#E9872D' },
+	{ label: 'Mag 9 - 9.9', color: '#F3653A' },
+	{ label: 'Mag ≥ 10', color: '#ED5338' },
+];
+
 export function getMarkerColor(magnitude: number | null): string {
 	if (magnitude === null) return '#a0aec0';
 	if (magnitude < 2) return '#F7F7F7';
