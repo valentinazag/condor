@@ -9,7 +9,7 @@ function App() {
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	return (
 		<>
-			<MapContainer filters={filters} sidebarOpen={sidebarOpen} />
+			<MapContainer filters={filters} />
 			<SideBar
 				onFilter={setFilters}
 				isOpen={sidebarOpen}

@@ -23,7 +23,7 @@ export function useEarthquakes(filters: FilterParams | null) {
 	const [earthquakes, setEarthquakes] = useState<Earthquake[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
-
+	const [hasSearched, setHasSearched] = useState(false);
 	useEffect(() => {
 		if (!filters) return;
 		const { starttime, endtime, minmagnitude } = filters;
@@ -37,6 +37,7 @@ export function useEarthquakes(filters: FilterParams | null) {
 				if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
 				const data = await response.json();
 				const parsed = v.parse(EarthquakeSchema, data);
+				setHasSearched(true);
 				setEarthquakes(parsed.features);
 			} catch (err) {
 				setError(err instanceof Error ? err.message : 'Error');
@@ -48,5 +49,5 @@ export function useEarthquakes(filters: FilterParams | null) {
 		fetchEarthquakes();
 	}, [filters]);
 
-	return { earthquakes, error, loading };
+	return { earthquakes, error, loading, hasSearched };
 }

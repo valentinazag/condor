@@ -1,14 +1,42 @@
 import { useState } from 'react';
 import '../App.css';
 import type { SideBarProps } from '../types/SideBarProps';
+
 export function Form({ onFilter }: SideBarProps) {
 	const [starttime, setStarttime] = useState('');
 	const [endtime, setEndtime] = useState('');
-	const [minmagnitude, setMinmagnitude] = useState(4);
+	const [minmagnitude, setMinmagnitude] = useState<number | string>('4');
+	const [formError, setFormError] = useState<string | null>(null);
+	const todayDate = new Date().toISOString().split('T')[0];
 
 	function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		onFilter({ starttime, endtime, minmagnitude });
+		setFormError(null);
+
+		if (!starttime || !endtime) {
+			setFormError('Both dates are required.');
+			return;
+		}
+
+		if (new Date(starttime) > new Date(endtime)) {
+			setFormError('Start date must be before end date.');
+			return;
+		}
+
+		const endOfToday = new Date();
+		if (new Date(endtime) > endOfToday) {
+			setFormError('End date cannot be in the future.');
+			return;
+		}
+
+		const magnitudeNum = minmagnitude === '' ? 4 : Number(minmagnitude);
+
+		if (magnitudeNum < 0 || magnitudeNum > 10) {
+			setFormError('Magnitude must be between 0 and 10.');
+			return;
+		}
+
+		onFilter({ starttime, endtime, minmagnitude: magnitudeNum });
 	}
 
 	return (
@@ -19,6 +47,7 @@ export function Form({ onFilter }: SideBarProps) {
 					type="date"
 					className="filter-form__input"
 					value={starttime}
+					max={todayDate}
 					onChange={(event) => setStarttime(event.target.value)}
 				/>
 			</label>
@@ -28,6 +57,7 @@ export function Form({ onFilter }: SideBarProps) {
 					type="date"
 					className="filter-form__input"
 					value={endtime}
+					max={todayDate}
 					onChange={(event) => setEndtime(event.target.value)}
 				/>
 			</label>
@@ -36,16 +66,21 @@ export function Form({ onFilter }: SideBarProps) {
 				<input
 					type="number"
 					className="filter-form__input"
+					placeholder="4"
 					value={minmagnitude}
 					min={0}
 					max={10}
 					step={0.1}
-					onChange={(event) => setMinmagnitude(Number(event.target.value))}
+					onChange={(event) => {
+						const val = event.target.value;
+						setMinmagnitude(val === '' ? '' : Number(val));
+					}}
 				/>
 			</label>
 			<button className="filter-form__button" type="submit">
 				Search
 			</button>
+			{formError && <p className="filter-form__error">{formError}</p>}
 		</form>
 	);
 }
