@@ -11,7 +11,7 @@ export default function SideBar({ onFilter, isOpen, onToggle }: SideBarProps) {
 				{isOpen ? '◀' : '▶'}
 			</button>
 			<div className="side-bar__content">
-				<h2 className="side-bar__title">Earthquakes</h2>
+				<h2 className="side-bar__title">Filter earthquakes data!</h2>
 				<Form onFilter={onFilter} />
 			</div>
 		</aside>

@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import * as v from 'valibot';
 import type { FilterParams } from '../types/FilterParams';
 
-type Earthquake = v.InferOutput<typeof EarthquakeSchema>['features'][number];
-
 const EarthquakeSchema = v.object({
 	features: v.array(
 		v.object({
@@ -18,6 +16,7 @@ const EarthquakeSchema = v.object({
 		}),
 	),
 });
+type Earthquake = v.InferOutput<typeof EarthquakeSchema>['features'][number];
 
 export function useEarthquakes(filters: FilterParams | null) {
 	const [earthquakes, setEarthquakes] = useState<Earthquake[]>([]);
@@ -46,8 +45,8 @@ export function useEarthquakes(filters: FilterParams | null) {
 				const parsed = v.parse(EarthquakeSchema, data);
 				setHasSearched(true);
 				setEarthquakes(parsed.features);
-			} catch (err) {
-				setError(err instanceof Error ? err.message : 'Error');
+			} catch (error) {
+				setError(error instanceof Error ? error.message : 'Error');
 			} finally {
 				setLoading(false);
 			}
