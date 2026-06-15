@@ -34,7 +34,14 @@ export function useEarthquakes(filters: FilterParams | null) {
 			setError(null);
 			try {
 				const response = await fetch(url);
-				if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+				if (!response.ok) {
+					if (response.status === 400) {
+						throw new Error(
+							'Too many results or invalid filters. Try a shorter date range or higher magnitude.',
+						);
+					}
+					throw new Error(`Request failed: ${response.status}`);
+				}
 				const data = await response.json();
 				const parsed = v.parse(EarthquakeSchema, data);
 				setHasSearched(true);
