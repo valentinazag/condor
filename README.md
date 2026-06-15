@@ -18,12 +18,19 @@ pnpm dev
 ```
 Open http://localhost:5173
 
-## Run with Docker
-
-Make sure you have Docker installed.
-
+**Start (attached):**
 ```bash
-docker compose up
+docker compose up --build
+```
+
+**Start (detached):**
+```bash
+docker compose up --build -d
+```
+
+**Stop:**
+```bash
+docker compose down
 ```
 Open http://localhost:8080
 
