@@ -3,16 +3,12 @@ import { useEffect, useRef } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '../App.css';
 import { useEarthquakes } from '../hooks/useEarthquakes';
-import type { FilterParams } from '../types/FilterParams';
-
-type MapContainerProps = {
-	filters: FilterParams | null;
-};
+import type { MapContainerProps } from '../types/MapContainerProps';
 
 export function MapContainer({ filters }: MapContainerProps) {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
-	const { earthquakes, loading, error } = useEarthquakes(filters);
+	const { earthquakes, loading, error, hasSearched } = useEarthquakes(filters);
 	const markersRef = useRef<maplibregl.Marker[]>([]);
 	useEffect(() => {
 		if (!mapContainer.current) return;
@@ -26,11 +22,13 @@ export function MapContainer({ filters }: MapContainerProps) {
 	}, []);
 
 	useEffect(() => {
-		if (!mapRef.current || earthquakes.length === 0) return;
-		markersRef.current.forEach((marker) => {
-			marker.remove();
+		markersRef.current.forEach((m) => {
+			m.remove();
 		});
 		markersRef.current = [];
+
+		const map = mapRef.current;
+		if (!map || earthquakes.length === 0) return;
 
 		earthquakes.forEach((feature) => {
 			const [longitude, latitude] = feature.geometry.coordinates;
@@ -40,14 +38,26 @@ export function MapContainer({ filters }: MapContainerProps) {
 			if (magnitude !== null) {
 				size = Math.max(15, magnitude * 6);
 
-				if (magnitude < 3) {
-					color = '#22c55e';
+				if (magnitude < 2) {
+					color = '#F7F7F7';
+				} else if (magnitude < 3) {
+					color = '#DBDBDB';
+				} else if (magnitude < 4) {
+					color = '#BEC4D9';
 				} else if (magnitude < 5) {
-					color = '#eab308';
+					color = '#A1D7E3';
+				} else if (magnitude < 6) {
+					color = '#8FC891';
 				} else if (magnitude < 7) {
-					color = '#f97316';
+					color = '#F9EB33';
+				} else if (magnitude < 8) {
+					color = '#F7C328';
+				} else if (magnitude < 9) {
+					color = '#E9872D';
+				} else if (magnitude < 10) {
+					color = '#F3653A';
 				} else {
-					color = '#ef4444';
+					color = '#ED5338';
 				}
 			}
 
@@ -77,11 +87,28 @@ export function MapContainer({ filters }: MapContainerProps) {
 			markersRef.current.push(marker);
 		});
 	}, [earthquakes]);
+
 	return (
-		<>
-			{loading && <p>Loading...</p>}
-			{error && <p>Error: {error}</p>}
+		<div style={{ position: 'fixed', inset: 0 }}>
 			<div ref={mapContainer} className="map-style" />
-		</>
+			{loading && (
+				<div className="map-overlay">
+					<div className="map-overlay__spinner" />
+					<p className="map-overlay__text">Loading earthquakes...</p>
+				</div>
+			)}
+			{hasSearched && !loading && earthquakes.length === 0 && (
+				<div className="map-overlay">
+					<p className="map-overlay__text">
+						No earthquakes found for the selected filters.
+					</p>
+				</div>
+			)}
+			{error && (
+				<div className="map-overlay map-overlay--error">
+					<p>{error}</p>
+				</div>
+			)}
+		</div>
 	);
 }
