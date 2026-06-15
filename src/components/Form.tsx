@@ -68,8 +68,6 @@ export function Form({ onFilter }: SideBarProps) {
 					className="filter-form__input"
 					placeholder="4"
 					value={minmagnitude}
-					min={0}
-					max={10}
 					step={0.1}
 					onChange={(event) => {
 						const val = event.target.value;
