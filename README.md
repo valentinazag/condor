@@ -18,6 +18,8 @@ pnpm dev
 ```
 Open http://localhost:5173
 
+## Run with Docker
+
 **Start (attached):**
 ```bash
 docker compose up --build
