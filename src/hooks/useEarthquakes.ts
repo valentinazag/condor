@@ -1,66 +1,62 @@
-import { useEffect, useState } from 'react';
-import * as v from 'valibot';
+import { useEffect, useRef, useState } from 'react';
+import type {
+	EarthquakeFeature,
+	EarthquakeWorkerMessage,
+} from '../types/EarthquakeTypes';
 import type { FilterParams } from '../types/FilterParams';
 
-const EarthquakeSchema = v.object({
-	features: v.array(
-		v.object({
-			properties: v.object({
-				mag: v.nullable(v.number()),
-				place: v.nullable(v.string()),
-				time: v.number(),
-			}),
-			geometry: v.object({
-				coordinates: v.tuple([v.number(), v.number(), v.number()]),
-			}),
-		}),
-	),
-});
-type Earthquake = v.InferOutput<typeof EarthquakeSchema>['features'][number];
-
 export function useEarthquakes(filters: FilterParams | null) {
-	const [earthquakes, setEarthquakes] = useState<Earthquake[]>([]);
+	const [earthquakes, setEarthquakes] = useState<EarthquakeFeature[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [hasSearched, setHasSearched] = useState(false);
+	const workerRef = useRef<Worker | null>(null);
+
+	useEffect(() => {
+		const worker = new Worker(
+			new URL('../workers/earthquakeWorker.ts', import.meta.url),
+			{ type: 'module' },
+		);
+		workerRef.current = worker;
+
+		return () => {
+			worker.terminate();
+		};
+	}, []);
+
 	useEffect(() => {
 		if (!filters) return;
-		const { starttime, endtime, minmagnitude } = filters;
+		const worker = workerRef.current;
+		if (!worker) return;
 
-		const params = new URLSearchParams({
-			format: 'geojson',
-			starttime: starttime,
-			endtime: endtime,
-			minmagnitude: minmagnitude.toString(),
-		});
+		setLoading(true);
+		setError(null);
 
-		const url = `https://earthquake.usgs.gov/fdsnws/event/1/query?${params.toString()}`;
-
-		async function fetchEarthquakes() {
-			setLoading(true);
-			setError(null);
-			try {
-				const response = await fetch(url);
-				if (!response.ok) {
-					if (response.status === 400) {
-						throw new Error(
-							'Too many results or invalid filters. Try a shorter date range or higher magnitude.',
-						);
-					}
-					throw new Error(`Request failed: ${response.status}`);
-				}
-				const data = await response.json();
-				const parsed = v.parse(EarthquakeSchema, data);
+		function handleMessage(event: MessageEvent<EarthquakeWorkerMessage>) {
+			const { earthquakes: data, error } = event.data;
+			if (error) {
+				setError(error);
+			} else if (data) {
+				setEarthquakes(data);
 				setHasSearched(true);
-				setEarthquakes(parsed.features);
-			} catch (error) {
-				setError(error instanceof Error ? error.message : 'Error');
-			} finally {
-				setLoading(false);
 			}
+			setLoading(false);
 		}
 
-		fetchEarthquakes();
+		function handleError(error: ErrorEvent) {
+			setError(error.message || 'Worker error');
+			setLoading(false);
+		}
+
+		worker.addEventListener('message', handleMessage);
+		worker.addEventListener('error', handleError);
+
+		worker.postMessage(filters);
+
+		return () => {
+			worker.removeEventListener('message', handleMessage);
+			worker.removeEventListener('error', handleError);
+		};
 	}, [filters]);
 
 	return { earthquakes, error, loading, hasSearched };
