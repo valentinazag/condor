@@ -46,3 +46,9 @@ Open http://localhost:8080
 
 Tip: keep date ranges under 30 days or use magnitude 4.5+ to avoid API limits.
 
+## Bonus: Web Worker
+
+The USGS fetch and response parsing run inside a dedicated Web Worker (`src/workers/earthquakeWorker.ts`), keeping the main thread free while the request is in flight. The worker receives filter params via `postMessage`, fetches and validates the data with Valibot, sorts the results by magnitude, and posts back a typed `EarthquakeWorkerMessage` — either the earthquake array or an error string.
+
+The `useEarthquakes` hook owns the worker lifecycle: it spawns the worker on mount, wires up `message` and `error` listeners per search, and terminates it on unmount. Shared types (`EarthquakeSchema`, `EarthquakeFeature`, `EarthquakeWorkerMessage`) live in `src/types/EarthquakeTypes.ts` so both sides of the worker boundary use the same definitions without duplication.
+
