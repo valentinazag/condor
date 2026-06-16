@@ -20,6 +20,7 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 	const mapRef = useRef<maplibregl.Map | null>(null);
 	const { earthquakes, loading, error, hasSearched } = useEarthquakes(filters);
 	const markersRef = useRef<maplibregl.Marker[]>([]);
+	const isMounted = useRef(false);
 
 	useEffect(() => {
 		if (!mapContainer.current) return;
@@ -33,6 +34,10 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 	}, []);
 
 	useEffect(() => {
+		if (!isMounted.current) {
+			isMounted.current = true;
+			return;
+		}
 		const map = mapRef.current;
 		if (!map) return;
 
