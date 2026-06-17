@@ -51,16 +51,11 @@ body {
 	transition: color 0.2s ease;
 }
 .navbar__link-btn {
-	background: none;
-	border: none;
-	font-family: sans-serif;
-	font-size: 13px;
-	color: #ffffff;
-	cursor: pointer;
-	padding: 0;
+	margin-right: 16px;
 }
 
-.navbar__darkmode-btn {
+.navbar__darkmode-btn,
+.navbar__link-btn {
 	background: #2d4a6b;
 	color: #ffffff;
 	border: none;

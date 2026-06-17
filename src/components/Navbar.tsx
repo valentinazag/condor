@@ -19,7 +19,6 @@ export function Navbar({
 					type="button"
 					className="navbar__link navbar__link-btn"
 					onClick={onToggleFilters}
-					style={{ marginRight: '16px' }}
 				>
 					Filters
 				</button>

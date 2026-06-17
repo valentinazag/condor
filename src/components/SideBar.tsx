@@ -1,8 +1,6 @@
-import '../App.css';
 import type { SideBarProps } from '../types/SideBarProps';
-import { magnitudeScale } from '../utils/markerUtils';
 import { Form } from './Form';
-
+import { MagnitudeScale } from './MagnitudeScale';
 
 export default function SideBar({ onFilter, isOpen, onToggle }: SideBarProps) {
 	return (
@@ -15,20 +13,7 @@ export default function SideBar({ onFilter, isOpen, onToggle }: SideBarProps) {
 			<div className="side-bar__content">
 				<h2 className="side-bar__title">Filter earthquakes data!</h2>
 				<Form onFilter={onFilter} />
-				<div className="side-bar__legend">
-					<h3 className="side-bar__legend-title">Magnitude Colors</h3>
-					<div className="side-bar__legend-grid">
-						{magnitudeScale.map((item) => (
-							<div key={item.label} className="side-bar__legend-item">
-								<span
-									className="side-bar__legend-dot"
-									style={{ backgroundColor: item.color }}
-								/>
-								<span className="side-bar__legend-label">{item.label}</span>
-							</div>
-						))}
-					</div>
-				</div>
+				<MagnitudeScale />
 			</div>
 		</aside>
 	);
