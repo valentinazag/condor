@@ -1,6 +1,6 @@
 import type { SideBarProps } from '../types/SideBarProps';
 import { Form } from './Form';
-import { MagnitudeScale } from './MagnitudeLegend';
+import { MagnitudeScale } from './MagnitudeScale';
 
 export default function SideBar({ onFilter, isOpen, onToggle }: SideBarProps) {
 	return (
