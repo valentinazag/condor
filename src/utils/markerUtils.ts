@@ -1,5 +1,5 @@
 export const magnitudeScale = [
-	{ label: 'No magnitud registered', color: '#090909' },
+	{ label: 'No magnitude registered', color: '#090909' },
 	{ label: 'Magnitude < 2', color: '#F7F7F7' },
 	{ label: 'Magnitude 2 - 2.9', color: '#DBDBDB' },
 	{ label: 'Magnitude 3 - 3.9', color: '#BEC4D9' },
@@ -12,18 +12,14 @@ export const magnitudeScale = [
 	{ label: 'Magnitude ≥ 10', color: '#ED5338' },
 ];
 
+function getScaleIndex(magnitude: number | null): number {
+	if (magnitude === null) return 0;
+	if (magnitude < 2) return 1;
+	return Math.min(Math.floor(magnitude), 10);
+}
+
 export function getMarkerColor(magnitude: number | null): string {
-	if (magnitude === null) return '#090909';
-	if (magnitude < 2) return '#F7F7F7';
-	if (magnitude < 3) return '#DBDBDB';
-	if (magnitude < 4) return '#BEC4D9';
-	if (magnitude < 5) return '#125d6e';
-	if (magnitude < 6) return '#8FC891';
-	if (magnitude < 7) return '#F9EB33';
-	if (magnitude < 8) return '#F7C328';
-	if (magnitude < 9) return '#E9872D';
-	if (magnitude < 10) return '#F3653A';
-	return '#ED5338';
+	return magnitudeScale[getScaleIndex(magnitude)].color;
 }
 
 export function getMarkerSize(magnitude: number | null): number {
