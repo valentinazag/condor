@@ -1,6 +1,12 @@
-import type { SideBarProps } from '../types/SideBarProps';
+import type { FilterParams } from '../types/FilterParams';
 import { Form } from './Form';
 import { MagnitudeScale } from './MagnitudeScale';
+
+type SideBarProps = {
+	onFilter: (params: FilterParams) => void;
+	isOpen: boolean;
+	onToggle: () => void;
+};
 
 export default function SideBar({ onFilter, isOpen, onToggle }: SideBarProps) {
 	return (

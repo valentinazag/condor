@@ -11,6 +11,7 @@ export function useEarthquakes(filters: FilterParams | null) {
 	const [loading, setLoading] = useState(false);
 	const [hasSearched, setHasSearched] = useState(false);
 	const workerRef = useRef<Worker | null>(null);
+	const requestIdRef = useRef(0);
 
 	useEffect(() => {
 		const worker = new Worker(
@@ -32,7 +33,10 @@ export function useEarthquakes(filters: FilterParams | null) {
 		setLoading(true);
 		setError(null);
 
+		const id = ++requestIdRef.current;
+
 		function handleMessage(event: MessageEvent<EarthquakeWorkerMessage>) {
+			if (event.data.requestId !== requestIdRef.current) return;
 			const { earthquakes: data, error } = event.data;
 			if (error) {
 				setError(error);
@@ -51,7 +55,7 @@ export function useEarthquakes(filters: FilterParams | null) {
 		worker.addEventListener('message', handleMessage);
 		worker.addEventListener('error', handleError);
 
-		worker.postMessage(filters);
+		worker.postMessage({ ...filters, requestId: id });
 
 		return () => {
 			worker.removeEventListener('message', handleMessage);

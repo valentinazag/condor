@@ -3,15 +3,17 @@ import type { EarthquakeWorkerMessage } from '../types/EarthquakeTypes';
 import { EarthquakeSchema } from '../types/EarthquakeTypes';
 import type { FilterParams } from '../types/FilterParams';
 
+type WorkerRequest = FilterParams & { requestId: number };
+
 type WorkerScope = {
-	onmessage: ((event: MessageEvent<FilterParams>) => void) | null;
+	onmessage: ((event: MessageEvent<WorkerRequest>) => void) | null;
 	postMessage: (message: unknown) => void;
 };
 
 const workerSelf = self as unknown as WorkerScope;
 
-workerSelf.onmessage = async (event: MessageEvent<FilterParams>) => {
-	const { starttime, endtime, minmagnitude } = event.data;
+workerSelf.onmessage = async (event: MessageEvent<WorkerRequest>) => {
+	const { starttime, endtime, minmagnitude, requestId } = event.data;
 
 	const params = new URLSearchParams({
 		format: 'geojson',
@@ -31,6 +33,7 @@ workerSelf.onmessage = async (event: MessageEvent<FilterParams>) => {
 					? 'Too many results or invalid filters. Try a shorter date range or higher magnitude.'
 					: `Request failed: ${response.status}`;
 			const msg: EarthquakeWorkerMessage = {
+				requestId,
 				earthquakes: null,
 				error: message,
 			};
@@ -43,10 +46,11 @@ workerSelf.onmessage = async (event: MessageEvent<FilterParams>) => {
 		const sorted = parsed.features.sort(
 			(a, b) => (b.properties.mag ?? 0) - (a.properties.mag ?? 0),
 		);
-		const msg: EarthquakeWorkerMessage = { earthquakes: sorted, error: null };
+		const msg: EarthquakeWorkerMessage = { requestId, earthquakes: sorted, error: null };
 		workerSelf.postMessage(msg);
 	} catch (error) {
 		const msg: EarthquakeWorkerMessage = {
+			requestId,
 			earthquakes: null,
 			error: error instanceof Error ? error.message : 'Error in worker',
 		};

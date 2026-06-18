@@ -20,5 +20,5 @@ export type EarthquakeFeature = v.InferOutput<
 >['features'][number];
 
 export type EarthquakeWorkerMessage =
-	| { earthquakes: EarthquakeFeature[]; error: null }
-	| { earthquakes: null; error: string };
+	| { requestId: number; earthquakes: EarthquakeFeature[]; error: null }
+	| { requestId: number; earthquakes: null; error: string };
