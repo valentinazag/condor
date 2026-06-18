@@ -7,6 +7,7 @@ export const EarthquakeSchema = v.object({
 				mag: v.nullable(v.number()),
 				place: v.nullable(v.string()),
 				time: v.number(),
+				url: v.nullable(v.string()),
 			}),
 			geometry: v.object({
 				coordinates: v.tuple([v.number(), v.number(), v.number()]),

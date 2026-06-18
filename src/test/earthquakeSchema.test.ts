@@ -7,6 +7,7 @@ const validFeature = {
 		mag: 5.2,
 		place: '10km NW of Mexico City',
 		time: 1704067200000,
+		url: 'https://earthquake.usgs.gov/earthquakes/eventpage/us7000sqzv/executive',
 	},
 	geometry: { coordinates: [-99.1, 19.4, 10.0] },
 };

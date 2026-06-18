@@ -64,7 +64,7 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 
 		earthquakes.forEach((feature) => {
 			const [longitude, latitude] = feature.geometry.coordinates;
-			const { place, mag: magnitude, time } = feature.properties;
+			const { place, mag: magnitude, time, url } = feature.properties;
 
 			const color = getMarkerColor(magnitude);
 			const size = getMarkerSize(magnitude);
@@ -74,12 +74,20 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 			markerEl.style.backgroundColor = color;
 			markerEl.style.width = `${size}px`;
 			markerEl.style.height = `${size}px`;
+			markerEl.addEventListener('click', () => {
+				map.flyTo({
+					center: [longitude, latitude],
+					zoom: Math.max(map.getZoom(), 10),
+					duration: 1200,
+					essential: true,
+				});
+			});
 
 			const marker = new maplibregl.Marker({ element: markerEl })
 				.setLngLat([longitude, latitude])
 				.setPopup(
 					new maplibregl.Popup({ offset: size / 2 }).setHTML(
-						buildPopupHTML(magnitude, place, time),
+						buildPopupHTML(magnitude, place, time, url),
 					),
 				)
 				.addTo(map);
@@ -104,7 +112,7 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 				type="button"
 				className="map-reset-btn"
 				onClick={handleResetZoom}
-				aria-label="Reset view"
+				title="Reset view"
 			>
 				<svg
 					viewBox="0 0 24 24"
@@ -125,6 +133,11 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 				<div className="map-overlay">
 					<div className="map-overlay__spinner" />
 					<p className="map-overlay__text">Loading earthquakes...</p>
+				</div>
+			)}
+			{hasSearched && !loading && earthquakes.length > 0 && (
+				<div className="map-results-badge">
+					{earthquakes.length} earthquakes found
 				</div>
 			)}
 			{hasSearched && !loading && earthquakes.length === 0 && (

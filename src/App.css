@@ -175,6 +175,24 @@ body {
 	color: #5aa884;
 }
 
+.map-results-badge {
+	position: absolute;
+	top: 12px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgba(22, 36, 54, 0.82);
+	color: #e2e8f0;
+	font-family: sans-serif;
+	font-size: 13px;
+	font-weight: 600;
+	padding: 6px 14px;
+	border-radius: 20px;
+	z-index: 5;
+	backdrop-filter: blur(4px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	pointer-events: none;
+}
+
 .custom-marker {
 	border-radius: 50%;
 	cursor: pointer;
@@ -214,6 +232,19 @@ body {
 .popup__time {
 	font-size: 12px;
 	color: #64748b;
+}
+
+.popup__link {
+	display: inline-block;
+	margin-top: 8px;
+	font-size: 12px;
+	color: #2563eb;
+	text-decoration: none;
+	font-family: sans-serif;
+}
+
+.popup__link:hover {
+	text-decoration: underline;
 }
 
 .side-bar {

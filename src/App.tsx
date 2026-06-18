@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import { MapContainer } from './components/MapContainer';
 import { Navbar } from './components/Navbar';
@@ -9,6 +9,15 @@ function App() {
 	const [filters, setFilters] = useState<FilterParams | null>(null);
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [isDarkMode, setIsDarkMode] = useState(false);
+
+	useEffect(() => {
+		const preventBrowserZoom = (event: WheelEvent) => {
+			if (event.ctrlKey) event.preventDefault();
+		};
+		window.addEventListener('wheel', preventBrowserZoom, { passive: false });
+		return () => window.removeEventListener('wheel', preventBrowserZoom);
+	}, []);
+
 	return (
 		<>
 			<Navbar
