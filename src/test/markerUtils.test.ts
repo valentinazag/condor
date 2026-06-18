@@ -36,34 +36,44 @@ describe('getMarkerSize', () => {
 describe('buildPopupHTML', () => {
 	const PLACE = '10km NW of Mexico City';
 	const TIME = 1704067200000;
+	const URL =
+		'https://earthquake.usgs.gov/earthquakes/eventpage/us7000sqzv/executive';
 
 	test('includes magnitude value', () => {
-		expect(buildPopupHTML(5.2, PLACE, TIME)).toContain('5.2');
+		expect(buildPopupHTML(5.2, PLACE, TIME, URL)).toContain('5.2');
 	});
 
 	test('shows fallback text when magnitude is null', () => {
-		expect(buildPopupHTML(null, PLACE, TIME)).toContain(
+		expect(buildPopupHTML(null, PLACE, TIME, URL)).toContain(
 			'No magnitude available',
 		);
 	});
 
 	test('includes place when provided', () => {
-		expect(buildPopupHTML(5, PLACE, TIME)).toContain(PLACE);
+		expect(buildPopupHTML(5, PLACE, TIME, URL)).toContain(PLACE);
 	});
 
 	test('shows fallback text when place is null', () => {
-		expect(buildPopupHTML(5, null, TIME)).toContain('No place available');
+		expect(buildPopupHTML(5, null, TIME, URL)).toContain('No place available');
 	});
 
 	test('shows "No date available" when time is 0', () => {
-		expect(buildPopupHTML(5, PLACE, 0)).toContain('No date available');
+		expect(buildPopupHTML(5, PLACE, 0, URL)).toContain('No date available');
 	});
 
 	test('uses black text for light magnitude colors', () => {
-		expect(buildPopupHTML(2, PLACE, TIME)).toContain('color: #000000');
+		expect(buildPopupHTML(2, PLACE, TIME, URL)).toContain('color: #000000');
 	});
 
 	test('uses marker color as text for dark magnitudes', () => {
-		expect(buildPopupHTML(7, PLACE, TIME)).toContain('color: #F7C328');
+		expect(buildPopupHTML(7, PLACE, TIME, URL)).toContain('color: #F7C328');
+	});
+
+	test('includes USGS link when url is provided', () => {
+		expect(buildPopupHTML(5, PLACE, TIME, URL)).toContain(URL);
+	});
+
+	test('omits link when url is null', () => {
+		expect(buildPopupHTML(5, PLACE, TIME, null)).not.toContain('href');
 	});
 });

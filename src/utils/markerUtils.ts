@@ -37,17 +37,22 @@ export function buildPopupHTML(
 	magnitude: number | null,
 	place: string | null,
 	time: number,
+	url: string | null,
 ): string {
 	const color = getMarkerColor(magnitude);
 	const textColor = getTextColor(color);
 	const formattedTime = time
 		? new Date(time).toLocaleString()
 		: 'No date available';
+	const link = url
+		? ` <br> <a class="popup__link" href="${url}" target="_blank" rel="noopener noreferrer">View on USGS ↗</a>`
+		: '';
 	return `
         <div class="popup__content">
             <h3 class="popup__title" style="color: ${textColor}">Magnitude: ${magnitude ?? 'No magnitude available'}</h3>
             <p class="popup__place">${place ?? 'No place available'}</p>
             <small class="popup__time">${formattedTime}</small>
+            ${link}
         </div>
     `;
 }
