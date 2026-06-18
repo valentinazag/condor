@@ -46,7 +46,11 @@ workerSelf.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 		const sorted = parsed.features.sort(
 			(a, b) => (b.properties.mag ?? 0) - (a.properties.mag ?? 0),
 		);
-		const msg: EarthquakeWorkerMessage = { requestId, earthquakes: sorted, error: null };
+		const msg: EarthquakeWorkerMessage = {
+			requestId,
+			earthquakes: sorted,
+			error: null,
+		};
 		workerSelf.postMessage(msg);
 	} catch (error) {
 		const msg: EarthquakeWorkerMessage = {
