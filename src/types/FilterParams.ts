@@ -1,5 +1,5 @@
 export type FilterParams = {
-    starttime: string;
-    endtime: string;
-    minmagnitude: number;
+	starttime: string;
+	endtime: string;
+	minmagnitude: number;
 };

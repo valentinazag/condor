@@ -42,8 +42,8 @@ export function useEarthquakes(filters: FilterParams | null) {
 				setError(error);
 			} else if (data) {
 				setEarthquakes(data);
-				setHasSearched(true);
 			}
+			setHasSearched(true);
 			setLoading(false);
 		}
 
