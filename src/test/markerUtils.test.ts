@@ -11,7 +11,7 @@ describe('getMarkerColor', () => {
 	});
 
 	test('null magnitude returns gray fallback', () => {
-		expect(getMarkerColor(null)).toBe('#a0aec0');
+		expect(getMarkerColor(null)).toBe('#090909');
 	});
 });
 

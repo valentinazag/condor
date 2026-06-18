@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import '../App.css';
-import type { SideBarProps } from '../types/SideBarProps';
+import type { FilterParams } from '../types/FilterParams';
 
-export function Form({ onFilter }: SideBarProps) {
+type FormProps = {
+	onFilter: (params: FilterParams) => void;
+};
+
+export function Form({ onFilter }: FormProps) {
 	const [starttime, setStarttime] = useState('');
 	const [endtime, setEndtime] = useState('');
 	const [minmagnitude, setMinmagnitude] = useState<number | string>('4');

@@ -15,6 +15,9 @@ type MapContainerProps = {
 	isDarkMode: boolean;
 };
 
+const INITIAL_CENTER: [number, number] = [0, 0];
+const INITIAL_ZOOM = 2;
+
 export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
@@ -28,7 +31,9 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 		mapRef.current = new maplibregl.Map({
 			container: mapContainer.current,
 			style: 'https://tiles.openfreemap.org/styles/liberty',
-			center: [0, 0],
+			center: INITIAL_CENTER,
+			zoom: INITIAL_ZOOM,
+			pitchWithRotate: false,
 		});
 		return () => mapRef.current?.remove();
 	}, []);
@@ -83,9 +88,39 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 		});
 	}, [earthquakes]);
 
+	function handleResetZoom() {
+		mapRef.current?.flyTo({
+			center: INITIAL_CENTER,
+			zoom: INITIAL_ZOOM,
+			bearing: 0,
+			pitch: 0,
+		});
+	}
+
 	return (
 		<div className="map-root">
 			<div ref={mapContainer} className="map-style" />
+			<button
+				type="button"
+				className="map-reset-btn"
+				onClick={handleResetZoom}
+				aria-label="Reset view"
+			>
+				<svg
+					viewBox="0 0 24 24"
+					width="16"
+					height="16"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="2"
+					strokeLinecap="round"
+				>
+					<title>Reset view</title>
+					<circle cx="12" cy="12" r="9" />
+					<line x1="12" y1="3" x2="12" y2="21" />
+					<line x1="3" y1="12" x2="21" y2="12" />
+				</svg>
+			</button>
 			{loading && (
 				<div className="map-overlay">
 					<div className="map-overlay__spinner" />
