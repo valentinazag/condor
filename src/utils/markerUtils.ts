@@ -45,7 +45,7 @@ export function buildPopupHTML(
 		: 'No date available';
 	return `
         <div class="popup__content">
-            <h3 class="popup__title" style="color: ${textColor}">Magnitude: ${magnitude ?? 'No maginitude available'}</h3>
+            <h3 class="popup__title" style="color: ${textColor}">Magnitude: ${magnitude ?? 'No magnitude available'}</h3>
             <p class="popup__place">${place ?? 'No place available'}</p>
             <small class="popup__time">${formattedTime}</small>
         </div>
