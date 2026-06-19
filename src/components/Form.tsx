@@ -66,7 +66,7 @@ export function Form({ onFilter }: FormProps) {
 				/>
 			</label>
 			<label className="filter-form__label">
-				Minimun magnitude
+				Minimum magnitude
 				<input
 					type="number"
 					className="filter-form__input"
