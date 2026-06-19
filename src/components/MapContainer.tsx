@@ -21,9 +21,12 @@ const INITIAL_ZOOM = 2;
 export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<maplibregl.Map | null>(null);
-	const { earthquakes, loading, error, hasSearched } = useEarthquakes(filters);
+	const { earthquakes, loading, error, hasSearched, limited } =
+		useEarthquakes(filters);
 	const markersRef = useRef<maplibregl.Marker[]>([]);
 	const isMounted = useRef(false);
+	const homeCenterRef = useRef<[number, number]>(INITIAL_CENTER);
+	const homeZoomRef = useRef(INITIAL_ZOOM);
 
 	useEffect(() => {
 		if (!mapContainer.current) return;
@@ -35,6 +38,22 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 			zoom: INITIAL_ZOOM,
 			pitchWithRotate: false,
 		});
+
+		const map = mapRef.current;
+
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				const center: [number, number] = [
+					position.coords.longitude,
+					position.coords.latitude,
+				];
+				homeCenterRef.current = center;
+				homeZoomRef.current = 3;
+				map.flyTo({ center, zoom: 3, duration: 1500 });
+			},
+			() => {},
+		);
+
 		return () => mapRef.current?.remove();
 	}, []);
 
@@ -98,8 +117,8 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 
 	function handleResetZoom() {
 		mapRef.current?.flyTo({
-			center: INITIAL_CENTER,
-			zoom: INITIAL_ZOOM,
+			center: homeCenterRef.current,
+			zoom: homeZoomRef.current,
 			bearing: 0,
 			pitch: 0,
 		});
@@ -135,9 +154,14 @@ export function MapContainer({ filters, isDarkMode }: MapContainerProps) {
 					<p className="map-overlay__text">Loading earthquakes...</p>
 				</div>
 			)}
-			{hasSearched && !loading && earthquakes.length > 0 && (
+			{hasSearched && !loading && earthquakes.length > 0 && !limited && (
 				<div className="map-results-badge">
 					{earthquakes.length} earthquakes found
+				</div>
+			)}
+			{limited && !loading && (
+				<div className="map-limit-banner">
+					Showing 500 results — Narrow your search for complete data.
 				</div>
 			)}
 			{hasSearched && !loading && earthquakes.length === 0 && (

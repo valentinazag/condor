@@ -5,6 +5,8 @@ import type { FilterParams } from '../types/FilterParams';
 
 type WorkerRequest = FilterParams & { requestId: number };
 
+const RESULT_LIMIT = 500;
+
 type WorkerScope = {
 	onmessage: ((event: MessageEvent<WorkerRequest>) => void) | null;
 	postMessage: (message: unknown) => void;
@@ -20,6 +22,7 @@ workerSelf.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 		starttime,
 		endtime,
 		minmagnitude: minmagnitude.toString(),
+		limit: RESULT_LIMIT.toString(),
 	});
 
 	const url = `https://earthquake.usgs.gov/fdsnws/event/1/query?${params.toString()}`;
@@ -30,12 +33,13 @@ workerSelf.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 		if (!response.ok) {
 			const message =
 				response.status === 400
-					? 'Too many results or invalid filters. Try a shorter date range or higher magnitude.'
+					? 'Invalid filters. Please check the date range and magnitude values.'
 					: `Request failed: ${response.status}`;
 			const msg: EarthquakeWorkerMessage = {
 				requestId,
 				earthquakes: null,
 				error: message,
+				limited: false,
 			};
 			workerSelf.postMessage(msg);
 			return;
@@ -50,6 +54,7 @@ workerSelf.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 			requestId,
 			earthquakes: sorted,
 			error: null,
+			limited: sorted.length >= RESULT_LIMIT,
 		};
 		workerSelf.postMessage(msg);
 	} catch (error) {
@@ -57,6 +62,7 @@ workerSelf.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 			requestId,
 			earthquakes: null,
 			error: error instanceof Error ? error.message : 'Error in worker',
+			limited: false,
 		};
 		workerSelf.postMessage(msg);
 	}

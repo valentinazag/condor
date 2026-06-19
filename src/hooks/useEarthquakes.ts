@@ -10,6 +10,7 @@ export function useEarthquakes(filters: FilterParams | null) {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [hasSearched, setHasSearched] = useState(false);
+	const [limited, setLimited] = useState(false);
 	const workerRef = useRef<Worker | null>(null);
 	const requestIdRef = useRef(0);
 
@@ -42,6 +43,7 @@ export function useEarthquakes(filters: FilterParams | null) {
 				setError(error);
 			} else if (data) {
 				setEarthquakes(data);
+				setLimited(event.data.limited);
 			}
 			setHasSearched(true);
 			setLoading(false);
@@ -63,5 +65,5 @@ export function useEarthquakes(filters: FilterParams | null) {
 		};
 	}, [filters]);
 
-	return { earthquakes, error, loading, hasSearched };
+	return { earthquakes, error, loading, hasSearched, limited };
 }

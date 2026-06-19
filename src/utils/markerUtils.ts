@@ -27,7 +27,7 @@ export function getMarkerSize(magnitude: number | null): number {
 	return Math.max(15, magnitude * 6);
 }
 
-const LIGHT_COLORS = new Set(['#F7F7F7', '#DBDBDB', '#BEC4D9']);
+const LIGHT_COLORS = new Set(['#F7F7F7', '#DBDBDB', '#BEC4D9', '#F9EB33']);
 
 function getTextColor(markerColor: string): string {
 	return LIGHT_COLORS.has(markerColor) ? '#000000' : markerColor;
